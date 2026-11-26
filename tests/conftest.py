@@ -57,9 +57,9 @@ def auth_service_readiness():
     start_time = time.time()
     while time.time() < start_time + timeout:
         try:
-            response = requests.get(AuthService.SERVICE_URL + "/docs")
+            response = requests.get(AuthService.SERVICE_URL + "/docs", timeout=5)
             response.raise_for_status()
-        except:
+        except requests.exceptions.RequestException:
             time.sleep(1)
         else:
             break

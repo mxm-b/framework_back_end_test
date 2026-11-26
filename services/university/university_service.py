@@ -7,7 +7,6 @@ from services.university.models.grade_request import GradeRequest
 from services.university.models.grade_response import GradeResponse
 from services.university.models.group_request import GroupRequest
 from services.university.models.group_response import GroupResponse
-from services.university.models.stats_request import StatsRequest
 from services.university.models.stats_response import StatsResponse
 from services.university.models.student_request import StudentRequest
 from services.university.models.student_response import StudentResponse
@@ -43,7 +42,9 @@ class UniversityService(BaseService):
         response = self.grade_helper.post_grade(json=grade_request.model_dump())
         return GradeResponse(**response.json())
 
-    def get_stats(self, stats_request: StatsRequest) -> StatsResponse:
-        params = stats_request.model_dump(exclude_none=True)
+    def get_stats(self, student_id: int, teacher_id: int, group_id: int) -> StatsResponse:
+        params = {"student_id": student_id,
+                  "teacher_id": teacher_id,
+                  "group_id": group_id}
         response = self.grade_helper.get_grade_stats(params=params)
         return StatsResponse(**response.json())
