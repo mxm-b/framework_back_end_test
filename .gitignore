@@ -3,6 +3,6 @@ venv/
 __pychache__/
 *.pyc
 .DS_Store
-*.log
+logs/
 .env
 docker-compose.yml

@@ -8,14 +8,11 @@ from services.university.models.group_request import GroupRequest
 from services.university.models.student_request import StudentRequest
 from services.university.models.teacher_request import TeacherRequest
 from services.university.university_service import UniversityService
-from utils.soft_assert import SoftAssert
+from utils.assert_utils import AssertUtils
 
-FIRST_GRADE_FOR_STUDENT_1 = 2
-SECOND_GRADE_FOR_STUDENT_1 = 5
-LIST_OF_GRADES_FOR_STUDENT_1 = [FIRST_GRADE_FOR_STUDENT_1, SECOND_GRADE_FOR_STUDENT_1]
-FIRST_GRADE_FOR_STUDENT_2 = 1
-SECOND_GRADE_FOR_STUDENT_2 = 4
-LIST_OF_GRADES_FOR_STUDENT_2 = [FIRST_GRADE_FOR_STUDENT_2, SECOND_GRADE_FOR_STUDENT_2]
+
+list_of_grades_student_1 = [2, 5]
+list_of_grades_student_2 = [1, 4]
 
 faker = Faker()
 
@@ -44,13 +41,13 @@ class TestStatsOfTwoStudents:
         Logger.info("Step 4. Give grade #1 for student #1")
         grade_student_1 = GradeRequest(teacher_id=teacher_response.id,
                                        student_id=student_response_1.id,
-                                       grade=FIRST_GRADE_FOR_STUDENT_1)
+                                       grade=list_of_grades_student_1[0])
         grade_response_student_1 = university_service.give_grade(grade_student_1)
 
         Logger.info("Step 5. Give grade #2 for student #1")
         grade_2_student_1 = GradeRequest(teacher_id=teacher_response.id,
                                        student_id=student_response_1.id,
-                                       grade=SECOND_GRADE_FOR_STUDENT_1)
+                                       grade=list_of_grades_student_1[1])
         grade_2_response_student_1 = university_service.give_grade(grade_2_student_1)
 
         Logger.info("Step 6. Create student #2")
@@ -65,13 +62,13 @@ class TestStatsOfTwoStudents:
         Logger.info("Step 7. Give grade #1 for student #2")
         grade_student_2 = GradeRequest(teacher_id=teacher_response.id,
                                        student_id=student_response_2.id,
-                                       grade=FIRST_GRADE_FOR_STUDENT_2)
+                                       grade=list_of_grades_student_2[0])
         grade_response_student_2 = university_service.give_grade(grade_student_2)
 
         Logger.info("Step 8. Give grade #2 for student #2")
         grade_2_student_2 = GradeRequest(teacher_id=teacher_response.id,
                                        student_id=student_response_2.id,
-                                       grade=SECOND_GRADE_FOR_STUDENT_2)
+                                       grade=list_of_grades_student_2[1])
         grade_response_student_2 = university_service.give_grade(grade_2_student_2)
 
         Logger.info("Step 9. Get stats for student #1")
@@ -81,24 +78,5 @@ class TestStatsOfTwoStudents:
             group_id=group_response.id
         )
 
-        with SoftAssert() as soft:
-            soft.check(stats_response_student_1.count == len(LIST_OF_GRADES_FOR_STUDENT_1),
-                f"Wrong quantity of grades.\n"
-                f"Actual: {stats_response_student_1.count}\n"
-                f"Expected: {len(LIST_OF_GRADES_FOR_STUDENT_1)}")
-
-            soft.check(stats_response_student_1.max == max(LIST_OF_GRADES_FOR_STUDENT_1),
-                f"Wrong max value.\n"
-                f"Actual: {stats_response_student_1.max}\n"
-                f"Expected: {max(LIST_OF_GRADES_FOR_STUDENT_1)}")
-
-            soft.check(stats_response_student_1.min == min(LIST_OF_GRADES_FOR_STUDENT_1),
-                f"Wrong min value.\n"
-                f"Actual: {stats_response_student_1.min}\n"
-                f"Expected: {min(LIST_OF_GRADES_FOR_STUDENT_1)}")
-
-            soft.check(stats_response_student_1.avg == sum(LIST_OF_GRADES_FOR_STUDENT_1)
-                / len(LIST_OF_GRADES_FOR_STUDENT_1),
-                f"Wrong average value.\n"
-                f"Actual: {stats_response_student_1.avg}\n"
-                f"Expected: {sum(LIST_OF_GRADES_FOR_STUDENT_1) / len(LIST_OF_GRADES_FOR_STUDENT_1)}")
+        assert_utils = AssertUtils()
+        assert_utils.assert_stats(stats_response_student_1, list_of_grades_student_1)
